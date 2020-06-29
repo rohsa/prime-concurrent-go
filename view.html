@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>AJAX</title>
+</head>
+
+<style>
+    .prime-block {
+        display: flex;
+    }
+    .prime-field {
+        padding-left: 10px;
+        width: 200px;
+        height: 40px;
+        border: 0;
+        outline: 0;
+        border-bottom: 2px solid;
+        border-bottom-color: lightgray;
+        font-size: 16px;
+    }
+    .submit-button {
+        background: lightskyblue;
+        width: 100px;
+        height: 40px;
+        border-style: none;
+        margin-left: 20px;
+        font-size: 16px;
+    }
+    .response-data {
+        word-wrap: break-word;
+    }
+</style>
+
+<body>
+    <div>
+        <h1>Get request using AJAX to get all prime numbers</h1>
+    </div>
+
+    <form>
+        <div class="prime-block">
+            <span>
+                <input class="prime-field" type="number" id="input" placeholder="Enter number" onfocusin="clearError()"/><br><br>
+                {{ with .Error }}
+                    <p style="color:red" class="error"> {{ . }}</p>
+                {{ end }}
+            </span>
+
+            <span>
+                <input class="submit-button" type="button" value="Submit" onclick="getPrime()"/>
+            </span>
+        </div>
+
+        <div class="submission-notifier">
+            <p> {{.SubmissionNotification}} </p>
+        </div>
+
+        <span class="response-data" id="response-data">
+                <p></p>
+        </span>
+
+    </form>
+
+    <script>
+        function clearError() {
+            document.getElementsByClassName('error')[0].style.visibility = 'hidden';
+        }
+
+        function getPrime() {
+            var request = new XMLHttpRequest();
+            var input = document.getElementById("input").value;
+            if (input < 2) {
+                alert("Please enter a value greater than 0")
+                return
+            }
+            request.open("GET", "/prime/"+input);
+            request.onreadystatechange = function() {
+                var div = document.getElementById("response-data");
+                if (this.readyState === this.DONE) {
+                    if (this.status === 200) {
+                        if (this.responseText != null) {
+                            div.innerHTML = "Success output: " + this.responseText;
+                        }
+                        else {
+                            alert("Error: no data received from server")
+                        }
+                    } else {
+                        var status = this.status
+                        alert("Error: " + status + " " + this.responseText)
+                    }
+                }
+            };
+            request.send();
+        }
+    </script>
+</body>
+
+</html>
+
+
